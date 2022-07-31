@@ -16,7 +16,7 @@ const pool = new Pool({
 
 const PORT = process.env.PORT || 8001
 
-app.get('/', async (req , res) => console.log(''))
+//  usuarios
 
 app.get('/users' , async (req, res) => {
     try{
@@ -27,7 +27,7 @@ app.get('/users' , async (req, res) => {
     }
 })
 
-app.post('/session', async (req, res) => {
+app.post('/user', async (req, res) => {
     const { user_name, passwd } = req.body
     let user = ''
     try{
@@ -40,6 +40,37 @@ app.post('/session', async (req, res) => {
         return res.status(400).send(e)
     }
 })
+
+app.patch('/user/:user_id', async (req, res) => {
+    const { user_id } = req.params
+    const data = req.body
+    try {
+        const exites = await pool.query('SELECT * FROM users WHERE user_id = ($1) ', [user_id])
+        if (!exites.rows[0]) {
+            return res.status(400).send('operetion is not allowed')
+        }
+        const updatedUser = await pool.query('UPDATE users SET user_name = ($1), passwd = ($2) WHERE user_id = ($3) RETURNING *', 
+        [data.user_name, data.passwd, user_id])
+        return res.status(200).send(updatedUser.rows) 
+    }catch (e) {
+        return res.status(400).send(e)
+    }
+})
+
+app.delete('/todo/:user_id', async (req, res) => {
+    const { user_id } = req.params
+    try {
+        const deletUser = await pool.query('DELETE FROM users WHERE user_id = ($1) RETURNING *', [user_id])
+        if (!deletUser.rows[0]) {
+            return res.status(400).send('operetion is not allowed')
+        }
+        return res.status(200).send(deletUser.rows) 
+    }catch (e) {
+        return res.status(400).send(e)
+    }
+})
+//  to dos 
+
 
 app.post('/todo/:user_id', async ( req, res ) => {
     const { description, done } = req.body
