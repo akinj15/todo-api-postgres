@@ -28,12 +28,12 @@ app.get('/users' , async (req, res) => {
 })
 
 app.post('/session', async (req, res) => {
-    const { user_name } = req.body
+    const { user_name, passwd } = req.body
     let user = ''
     try{
         user = await pool.query('SELECT * FROM users WHERE user_name = ($1)', [user_name])
         if(!user.rows[0]){
-            user = await pool.query('INSERT INTO users(user_name) VALUES ($1) RETURNING *', [user_name])
+            user = await pool.query('INSERT INTO users(user_name) VALUES ($1), users(passwd) VALUES ($2) RETURNING *', [user_name, passwd])
         }
         return res.status(200).send(user.rows)
     }catch(e){
