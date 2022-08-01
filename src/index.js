@@ -26,7 +26,18 @@ app.get('/users' , async (req, res) => {
         return res.status(400).send(e)
     }
 })
-
+app.get('/user' , async (req, res) => {
+    const user = req.body
+    try{
+        const exites = await pool.query('SELECT * FROM users WHERE user_name = ($1) ', [user.user_name])
+        if (!exites.rows[0]) {
+            return res.status(400).send('operetion is not allowed')
+        }
+        return res.status(200).send(exites.rows)
+    }catch(e) {
+        return res.status(400).send(e)
+    }
+})
 app.post('/user', async (req, res) => {
     const { user_name, passwd } = req.body
     let user = ''
