@@ -107,7 +107,7 @@ app.get('/todo/:user_id' , async(req, res) => {
     }
 })
 
-app.patch('/todo/:user_id/:id', async (req, res) => {
+app.patch('/todo/:user_id/:todo_id', async (req, res) => {
     const { user_id, todo_id } = req.params
     const data = req.body
     console.log(data)
