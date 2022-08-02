@@ -108,16 +108,16 @@ app.get('/todo/:user_id' , async(req, res) => {
 })
 
 app.patch('/todo/:user_id/:id', async (req, res) => {
-    const { user_id, id } = req.params
+    const { user_id, todo_id } = req.params
     const data = req.body
     console.log(data)
     try {
-        const belongsToUser = await pool.query('SELECT * FROM todos WHERE user_id = ($1) AND todo_id = ($2)', [user_id, id])
+        const belongsToUser = await pool.query('SELECT * FROM todos WHERE user_id = ($1) AND todo_id = ($2)', [user_id, todo_id])
         if (!belongsToUser.rows[0]) {
             return res.status(400).send('operetion is not allowed')
         }
         const updatedTodo = await pool.query('UPDATE todos SET todo_description = ($1), todo_done = ($2) WHERE todo_id = ($3) RETURNING *', 
-        [data.description, data.done, id])
+        [data.todo_description, data.todo_done, todo_id])
         return res.status(200).send(updatedTodo.rows) 
     }catch (e) {
         return res.status(400).send(e)
