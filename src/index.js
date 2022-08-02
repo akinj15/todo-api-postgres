@@ -84,11 +84,11 @@ app.delete('/user/:user_id', async (req, res) => {
 
 
 app.post('/todo/:user_id', async ( req, res ) => {
-    const { description, done } = req.body
+    const { title, todo_description, todo_done } = req.body
     const { user_id } = req.params
     
     try {
-        const newTodo = await pool.query('INSERT INTO todos (todo_description, todo_done, user_id) VALUES ($1, $2, $3) RETURNING * ' ,[description, done, user_id ])
+        const newTodo = await pool.query('INSERT INTO todos (title, todo_description, todo_done, user_id) VALUES ($1, $2, $3, $4) RETURNING * ' ,[title, todo_description, todo_done, user_id ])
         return res.status(200).send(newTodo.rows)
     }catch(e){
         res.status(400).send(e)
