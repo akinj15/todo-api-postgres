@@ -69,7 +69,7 @@ app.patch('/user/:user_id', async (req, res) => {
 })
 
 app.delete('/user/:user_id', async (req, res) => {
-    const { user_id } = req.params
+    let { user_id } = req.params
     try {
         const deletUser = await pool.query('DELETE FROM users WHERE user_id = ($1) RETURNING *', [user_id])
         if (!deletUser.rows[0]) {
